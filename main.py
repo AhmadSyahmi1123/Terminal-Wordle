@@ -7,16 +7,17 @@ from words import words
 colorama.init(autoreset=True)
 
 
-def Petunjuk():
-    indeks = len(perkataan_rawak)
+def Clue():
+    index = len(random_word)
     # pick random number for an index
-    hint = randint(0, indeks - 1)
+    hint = randint(0, index - 1)
     # the random number then becomes the index of the word
-    petunjuk = perkataan_rawak[hint]
-    print(f"Petunjuk: {petunjuk}")
+    clue = random_word[hint]
+    print(f"Petunjuk: {clue}")
 
 def Mode():
     mode = input("Choose a mode: (E)asy, (M)edium, (H)ard: ").upper()
+    print("Sila masukkan mode yang betul!")
     easy = 10
     medium = 7
     hard = 5
@@ -29,49 +30,54 @@ def Mode():
             return hard
     
 def Run_Game():
-    bil_tekaan = Mode()
-    Petunjuk()
-    while bil_tekaan > 0:
-        print(f"Anda ada {bil_tekaan} tekaan!")
-        tekaan = input("Perkataan tekaan: ").upper()
-        if len(tekaan) > len(perkataan_rawak):
-            print("Perkataan tekaan mesti tidak melebihi 5 huruf!")
+    guesses = Mode()
+    Clue()
+    while guesses > 0:
+        print(f"You have {guesses} guesses!")
+        guess = input("Your Guess: ").upper()
+        
+        if len(guess) > len(random_word):
+            print("The word is too long!")
             continue
-        if tekaan == "":
-            print("Perkataan tekaan tidak boleh kosong!")
+        if guess == "":
+            print("Please enter a guess!")
             continue
 
-        bil_tekaan -= 1
-        huruf_yg_betul = []
+        guesses -= 1
+        pos = 0
+        correct_letter = ''
         # Check if the character is correct
-        for huruf in range(len(perkataan_rawak)):
+        for letter in guess:
             # if character entered is in the word and in correct position,
             # add it to the correct_char with green background
-            if tekaan[huruf] == perkataan_rawak[huruf]:
-                huruf_yg_betul.append(Back.GREEN + tekaan[huruf])
+            if letter == random_word[pos]:
+                correct_letter += Back.GREEN + guess[pos]
             # if character entered is in the word but in incorrect position,
             # add it to correct_char with yellow background
-            if tekaan[huruf] in perkataan_rawak and tekaan[huruf] != perkataan_rawak[huruf]:
-                huruf_yg_betul.append(Back.YELLOW + tekaan[huruf])
+            elif (letter in random_word[pos]) and (letter != random_word[pos]):
+                correct_letter += Back.YELLOW + guess[pos]
             else:
                 # if character entered is not in the word,
                 # add it to correct_char with red background
-                if tekaan[huruf] != perkataan_rawak[huruf]:
-                    huruf_yg_betul.append(Back.RED + tekaan[huruf])
-        print(*huruf_yg_betul)
+                if letter != random_word[pos]:
+                    correct_letter += Back.RED + guess[pos]
+            pos += 1
+            correct_letter.split(" ")
+        print(correct_letter)
+        
         # if all character given by user are correct, break the loop
-        if tekaan[0:4] == perkataan_rawak[0:4]:
+        if guess[0:4] == random_word[0:4]:
             print('Tahniah! Anda meneka dengan betul!')
             time.sleep(5)
             break
         # if all character given by user are wrong ten times, break the loop
-        if bil_tekaan == 0:
-            print(f"Salah... Perkataan yang betul adalah {perkataan_rawak}")
+        if guesses == 0:
+            print(f"Salah... Perkataan yang betul adalah {random_word}")
             time.sleep(5)
             break
 
 if __name__ == "__main__":
-    senarai_perkataan = words()
-    perkataan_rawak = choice(senarai_perkataan)
+    word_list = ["HAPPY"]
+    random_word = choice(word_list)
     print("Welcome to Terminal Wordle!")
     Run_Game()
